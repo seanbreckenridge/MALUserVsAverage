@@ -1,5 +1,5 @@
 # MALUserVsAverage
-Uses graph.anime.plus to generate a graph that shows correlation between the user and average score on MyAnimeList. Each blip on the graph x-coordinate is your score, and y-coordinate is the weighted MAL score. There is no grand takeaway from this, its just fun to look at.
+Uses [graph.anime.plus](https://graph.anime.plus/) to generate a graph that shows correlation between the user and average score on [MyAnimeList](https://myanimelist.net/). Each blip on the graph x-coordinate is your score, and y-coordinate is the weighted MAL score. There is no grand takeaway from this, its just fun to look at.
 
 <img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/1.png" width=400> <img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/2.png" width=400>
 
@@ -9,7 +9,7 @@ graph.anime.plus does not list scores for MAL entries under 50 members; [Jikan](
 
 ### Installation
 
-1) Submit a MAL Username to graph.anime.plus, and wait for them to finish processing it.
+1) Submit a MAL Username to [graph.anime.plus](https://graph.anime.plus/), and wait for them to finish processing it.
 2) `git clone https://github.com/purplepinapples/MALUserVsAverage`
 3) `pip3 install --user numpy matplotlib scipy`
 4) Run! A basic execution would be `python3 run.py --username <your_username> --anime --graph`, or any of the following for different results:
