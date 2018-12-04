@@ -229,7 +229,7 @@ def options():
 
     parser = argparse.ArgumentParser(description="Create user vs average MAL Score correlation graphs.", prog="python3 driver.py", formatter_class=lambda prog: fixFormatter(prog, max_help_position=40))
     optionals = parser._action_groups.pop()
-    required = parser.add_argument_group('required arguemnts:')
+    required = parser.add_argument_group('required arguemnts')
     required.add_argument("-u", "--username", help="The MAL User for who the list/graph should be generated.", required=True)
     scrape_type = required.add_mutually_exclusive_group(required=True)
     scrape_type.add_argument("-a", "--anime", help="Create a graph/csv file for this users anime.", action="store_true")
@@ -244,7 +244,7 @@ def options():
                            "P: Plan to Watch\n"
                            )
     parser._action_groups.append(optionals)
-    choose_outputs = parser.add_argument_group("(optional) output options (Generates both if nothing specified): ")
+    choose_outputs = parser.add_argument_group("(optional) output options (Generates both if nothing specified)")
     choose_outputs.add_argument("-c", "--csv", help="Output a CSV File.", action="store_true")
     choose_outputs.add_argument("-g", "--graph", help="Output a graph.", action="store_true")
     choose_outputs.add_argument("-d", "--display-name", help="Display the username on the graph.", action="store_true")
