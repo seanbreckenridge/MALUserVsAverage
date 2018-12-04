@@ -40,7 +40,7 @@ usage: python3 driver.py [-h] -u USERNAME (-a | -m)
 
 Create user vs average MAL Score correlation graphs.
 
-required arguemnts::
+required arguemnts:
   -u USERNAME, --username USERNAME     The MAL User for who the list/graph
                                        should be generated.
   -a, --anime                          Create a graph/csv file for this users
@@ -65,7 +65,7 @@ optional arguments:
                                        D: Dropped
                                        P: Plan to Watch
 
-(optional) output options (Generates both if nothing specified): :
+(optional) output options (Generates both if nothing specified):
   -c, --csv                            Output a CSV File.
   -g, --graph                          Output a graph.
   -d, --display-name                   Display the username on the graph.
