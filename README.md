@@ -1,6 +1,8 @@
 # MALUserVsAverage
 Uses graph.anime.plus to generate a graph that shows correlation between the user and average score on MyAnimeList. Each blip on the graph x-coordinate is your score, and y-coordinate is the weighted MAL score. There is no grand takeaway from this, its just fun to look at.
 
+<img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/1.png" width=400> <img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/2.png" width=400>
+
 Since the MAL API has been down for a while, this uses [graph.anime.plus](https://graph.anime.plus/) to get data from users [MyAnimeList](https://myanimelist.net/) account.
 
 graph.anime.plus does not list scores for MAL entries under 50 members; [Jikan](https://jikan.moe/) is used to get MAL scores for those.
@@ -13,15 +15,19 @@ graph.anime.plus does not list scores for MAL entries under 50 members; [Jikan](
 4) Run! A basic execution would be `python3 run.py --username <your_username> --anime --graph`, or any of the following for different results:
 
 Create a graph; only plot anime the user has completed:
+
 `python3 run.py -u USERNAME --anime --graph --filter C`
 
 Create a graph; only take into account MAL scores cached locally in the last day:
+
 `python3 run.py -u USERNAME --anime --graph --cache-decay-time 1`
 
 Create a graph; plot the users *manga* and include their username in the Graph's title.
+
 `python3 run.py -u USERNAME --manga --graph --display-name`
 
 Generate a CSV file of all anime the user has scored, ordered `MAL ID, Status, User Rating, Mal Rating`:
+
 `python3 run.py -u USERNAME --anime --csv`
 
 
