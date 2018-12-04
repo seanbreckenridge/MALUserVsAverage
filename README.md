@@ -1,5 +1,5 @@
 # MAL User vs Average
-Uses [graph.anime.plus](https://graph.anime.plus/) to generate a graph that shows correlation between the user and average score on [MyAnimeList](https://myanimelist.net/). Each blip on the graph x-coordinate is your score, and y-coordinate is the weighted MAL score. There is no grand takeaway from this, its just fun to look at.
+Uses [graph.anime.plus](https://graph.anime.plus/) to generate a graph that shows correlation between the user and average score on [MyAnimeList](https://myanimelist.net/). Each blip on the graphs' x-coordinate is your score, and y-coordinate is the weighted MAL score. There is no grand takeaway from this, its just fun to look at.
 
 <img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/1.png" width=400> <img src="https://raw.githubusercontent.com/purplepinapples/MALUserVsAverage/master/images/2.png" width=400>
 
