@@ -11,7 +11,7 @@ graph.anime.plus does not list scores for MAL entries under 50 members; [Jikan](
 
 1) Submit a MAL Username to [graph.anime.plus](https://graph.anime.plus/), and wait for them to finish processing it.
 2) `git clone https://github.com/purplepinapples/MALUserVsAverage`
-3) `pip3 install --user numpy matplotlib scipy`
+3) `pip3 install --user numpy matplotlib scipy bs4`
 4) Run! A basic execution would be `python3 run.py --username <your_username> --anime --graph`, or any of the following for different results:
 
 Create a graph; only plot anime the user has completed:
