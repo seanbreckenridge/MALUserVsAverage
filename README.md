@@ -22,7 +22,7 @@ Create a graph; only take into account MAL scores cached locally in the last day
 
 `python3 run.py -u USERNAME --anime --graph --cache-decay-time 1`
 
-Create a graph; plot the users *manga* and include their username in the Graph's title.
+Create a graph; plot the users *manga* and include their username in the Graph's title:
 
 `python3 run.py -u USERNAME --manga --graph --display-name`
 
