@@ -227,7 +227,7 @@ def options():
 
     status_map = {"W": "Currently Watching", "C": "Completed", "O": "On-Hold", "D": "Dropped", "P": "Plan to Watch"}
 
-    parser = argparse.ArgumentParser(description="Create user vs average MAL Score correlation graphs.", prog="python3 driver.py", formatter_class=lambda prog: fixFormatter(prog, max_help_position=40))
+    parser = argparse.ArgumentParser(description="Create user vs average MAL Score correlation graphs.", prog="python3 {}".format(sys.argv[0]), formatter_class=lambda prog: fixFormatter(prog, max_help_position=40))
     optionals = parser._action_groups.pop()
     required = parser.add_argument_group('required arguemnts')
     required.add_argument("-u", "--username", help="The MAL User for who the list/graph should be generated.", required=True)
