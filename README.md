@@ -34,9 +34,9 @@ Generate a CSV file of all anime the user has scored, ordered `MAL ID, Status, U
 Tested in python versions `3.6.5` and `3.7.1`.
 
 ```
-usage: python3 driver.py [-h] -u USERNAME (-a | -m)
-                       [--cache-decay-time CACHE_DECAY_TIME] [-w WAIT_TIME]
-                       [-f FILTER] [-c] [-g] [-d]
+usage: python3 run.py [-h] -u USERNAME (-a | -m)
+                      [--cache-decay-time CACHE_DECAY_TIME] [-w WAIT_TIME]
+                      [-f FILTER] [-c] [-g] [-d]
 
 Create user vs average MAL Score correlation graphs.
 
@@ -54,8 +54,8 @@ optional arguments:
                                        cache before they are refresed. If not
                                        provided, uses 2 weeks.
   -w WAIT_TIME, --wait-time WAIT_TIME  Wait time between (manual; non-API)
-                                       scrape requests. Default and
-                                       recomended is 5 (seconds).
+                                       scrape requests. Default and recomended
+                                       is 5 (seconds).
   -f FILTER, --filter FILTER           Filter by Status,
                                        e.g. '-f WC' would filter so output
                                        contained only Watching and Completed.
