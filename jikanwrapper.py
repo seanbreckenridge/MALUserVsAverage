@@ -13,7 +13,7 @@ class Jikan:
     MANGA = False
 
     def __init__(self):
-        self.base_url = 'https://api.jikan.moe/'
+        self.base_url = 'https://api.jikan.moe'
         self.session = requests.Session()
 
     def get(self, id, option):
