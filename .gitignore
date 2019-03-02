@@ -5,3 +5,5 @@ __pycache__/
 *.DS_Store
 /anime_cache.json
 /manga_cache.json
+*.png
+*.csv
