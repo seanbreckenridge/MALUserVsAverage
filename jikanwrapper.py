@@ -1,3 +1,4 @@
+import time
 import requests
 
 # Uses the wonderful https://jikan.moe/ to cache info about MAL Scores
@@ -13,7 +14,7 @@ class Jikan:
     MANGA = False
 
     def __init__(self):
-        self.base_url = 'https://api.jikan.moe'
+        self.base_url = 'https://api.jikan.moe/v3/'
         self.session = requests.Session()
 
     def get(self, id, option):
@@ -21,6 +22,7 @@ class Jikan:
         response = self.session.get(url)
         if response.status_code > 400:
             raise JikanException(f"id {id} failed with {response.status_code}")
+        time.sleep(2.75) # comply with rate limit
         return response.json()
 
     # 0 is no score
