@@ -22,12 +22,18 @@ class Jikan:
         response = self.session.get(url)
         if response.status_code > 400:
             raise JikanException(f"id {id} failed with {response.status_code}")
-        time.sleep(2.75) # comply with rate limit
+        time.sleep(10) # comply with rate limit
         return response.json()
 
     # 0 is no score
-    def get_score(self, id, option):
-        return float(self.get(id, option)["score"])
+    def get_score(self, id, option) -> float:
+        score = self.get(id, option)["score"]
+        if score is None:
+            return 0
+        try:
+            return float(score)
+        except ValueError:
+            return 0
 
 if __name__ == "__main__":
     # Basic Tests

@@ -40,7 +40,7 @@ usage: python3 run.py [-h] -u USERNAME (-a | -m)
 
 Create user vs average MAL Score correlation graphs.
 
-required arguemnts:
+required arguments:
   -u USERNAME, --username USERNAME     The MAL User for who the list/graph
                                        should be generated.
   -a, --anime                          Create a graph/csv file for this users
@@ -54,7 +54,7 @@ optional arguments:
                                        cache before they are refresed. If not
                                        provided, uses 2 weeks.
   -w WAIT_TIME, --wait-time WAIT_TIME  Wait time between (manual; non-API)
-                                       scrape requests. Default and recomended
+                                       scrape requests. Default and recommended
                                        is 5 (seconds).
   -f FILTER, --filter FILTER           Filter by Status,
                                        e.g. '-f WC' would filter so output

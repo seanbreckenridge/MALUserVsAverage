@@ -96,7 +96,7 @@ class CacheError(Exception):
 class Cache:
     """Class that caches requests to local json file, and scrapes for scores that could not be found."""
     def __init__(self, time_diff, jikan, scraper):
-        print("Fixing cache...")
+        # print("Fixing cache...")
         self.write_to_cache_periodically = 25
         self.allowed_time_diff = time_diff
         self.jikan = jikan
@@ -109,7 +109,7 @@ class Cache:
                 self.items = load(js_f)
             except JSONDecodeError:  # file is empty or broken
                 self.items = {}
-        self.update_runtime_cache()
+        # self.update_runtime_cache()
 
     def update_runtime_cache(self):
         """When cache is initialized, update any cache items that may be out of date.
@@ -144,7 +144,9 @@ class Cache:
 
     def not_valid_cache_item(self, mal_id):
         """If it is still within the allowed time frame."""
-        return has_passed_time_difference(self.items[str(mal_id)]["unix"], self.allowed_time_diff) or float(self.items[str(mal_id)]["score"]) == 0.0
+        #return has_passed_time_difference(self.items[str(mal_id)]["unix"], self.allowed_time_diff) or float(self.items[str(mal_id)]["score"]) == 0.0
+        # TODO: disabled for now
+        return False
 
     def get(self, id):
         """Gets the score for the id from cache if it exists, else raises a CacheError"""
@@ -235,7 +237,7 @@ def options():
     scrape_type.add_argument("-a", "--anime", help="Create a graph/csv file for this users anime.", action="store_true")
     scrape_type.add_argument("-m", "--manga", help="Create a graph/csv file for this users manga.", action="store_true")
     optionals.add_argument("--cache-decay-time", type=int, help="Number of days scores should stay in cache before they are refresed. If not provided, uses 2 weeks.")
-    optionals.add_argument("-w", "--wait-time", type=int, help="Wait time between (manual; non-API) scrape requests. Default and recomended is 5 (seconds).")
+    optionals.add_argument("-w", "--wait-time", type=int, help="Wait time between (manual; non-API) scrape requests. Default and recommended is 5 (seconds).")
     optionals.add_argument("-f", "--filter", help="M|Filter by Status,\ne.g. '-f WC' would filter so output\ncontained only Watching and Completed.\n" +
                            "W: Currently Watching\n" +
                            "C: Completed\n" +
