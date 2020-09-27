@@ -35,18 +35,21 @@ def current_unix_time():
 
 def has_passed_time_difference(oldtime, difference_in_days):
     """
-        args:
-            oldtime: unix time of old scrape
-            difference_in_days: allowed cache time
-        returns:
-            True if we need to scrape again; values in cache have been there too long."""
+    args:
+        oldtime: unix time of old scrape
+        difference_in_days: allowed cache time
+    returns:
+        True if we need to scrape again; values in cache have been there too long."""
     return time() > float(oldtime) + float(difference_in_days * 60 * 60 * 24)
 
 
 def rudimentary_scraper(scraper, id):
     """Uses bs4 to scrape the score from MAL directly"""
-    score = scraper.get_soup(url="https://myanimelist.net/{}/{}".format(
-            scrape_type(), id)).find("div", {"data-title": "score"}).text.strip()
+    score = (
+        scraper.get_soup(url="https://myanimelist.net/{}/{}".format(scrape_type(), id))
+        .find("div", {"data-title": "score"})
+        .text.strip()
+    )
     if score == "N/A":
         score = 0
     return float(score)
@@ -54,15 +57,15 @@ def rudimentary_scraper(scraper, id):
 
 def get_status(status_td):
     """Takes a td as input and returns the relevant status"""
-    if 'status-P' in status_td["class"]:
+    if "status-P" in status_td["class"]:
         status = "Plan to Watch"
-    elif 'status-F' in status_td["class"]:
+    elif "status-F" in status_td["class"]:
         status = "Completed"
-    elif 'status-D' in status_td["class"]:
+    elif "status-D" in status_td["class"]:
         status = "Dropped"
-    elif 'status-H' in status_td["class"]:
+    elif "status-H" in status_td["class"]:
         status = "On-Hold"
-    elif 'status-C' in status_td["class"]:
+    elif "status-C" in status_td["class"]:
         status = "Currently Watching"
     else:
         status = None
@@ -71,14 +74,15 @@ def get_status(status_td):
 
 def update_json_file(json_fullpath, all_items):
     """Overwrites the JSON file with any new data"""
-    with open(json_fullpath, 'w') as js_f:
+    with open(json_fullpath, "w") as js_f:
         js_f.write(dumps(all_items))
 
 
 class fixFormatter(argparse.HelpFormatter):
     """Class to allow multi line help statements in argparse"""
+
     def _split_lines(self, text, width):
-        if text.startswith('M|'):  # multiline statement
+        if text.startswith("M|"):  # multiline statement
             return text[2:].splitlines()
         # this is the RawTextHelpFormatter._split_lines
         return argparse.HelpFormatter._split_lines(self, text, width)
@@ -86,6 +90,7 @@ class fixFormatter(argparse.HelpFormatter):
 
 class UnknownUser(Exception):
     """User could not be found on graph.anime.plus"""
+
     pass
 
 
@@ -95,16 +100,19 @@ class CacheError(Exception):
 
 class Cache:
     """Class that caches requests to local json file, and scrapes for scores that could not be found."""
+
     def __init__(self, time_diff, jikan, scraper):
         # print("Fixing cache...")
         self.write_to_cache_periodically = 25
         self.allowed_time_diff = time_diff
         self.jikan = jikan
         self.scraper = scraper
-        self.json_fullpath = path.join(path.dirname(path.realpath(__file__)), JSON_FILENAME)
+        self.json_fullpath = path.join(
+            path.dirname(path.realpath(__file__)), JSON_FILENAME
+        )
         if not path.exists(self.json_fullpath):
-            open(self.json_fullpath, 'a').close()
-        with open(self.json_fullpath, 'r') as js_f:
+            open(self.json_fullpath, "a").close()
+        with open(self.json_fullpath, "r") as js_f:
             try:
                 self.items = load(js_f)
             except JSONDecodeError:  # file is empty or broken
@@ -113,13 +121,16 @@ class Cache:
 
     def update_runtime_cache(self):
         """When cache is initialized, update any cache items that may be out of date.
-        Doesn't have to be run, """
+        Doesn't have to be run,"""
         for mal_id in list(self.items):
             if self.not_valid_cache_item(mal_id):
                 print(f"Outdated score for {mal_id} in cache, updating", end=" ")
                 score = self.download_score(id=mal_id, log_protocol=True)
                 print(score)
-                self.items[str(mal_id)] = {"unix": str(current_unix_time()), "score": str(score)}
+                self.items[str(mal_id)] = {
+                    "unix": str(current_unix_time()),
+                    "score": str(score),
+                }
 
     def download_score(self, id, log_protocol):
         """Download a score from MAL. Uses Jikan API if possible, else manually scrapes."""
@@ -144,7 +155,7 @@ class Cache:
 
     def not_valid_cache_item(self, mal_id):
         """If it is still within the allowed time frame."""
-        #return has_passed_time_difference(self.items[str(mal_id)]["unix"], self.allowed_time_diff) or float(self.items[str(mal_id)]["score"]) == 0.0
+        # return has_passed_time_difference(self.items[str(mal_id)]["unix"], self.allowed_time_diff) or float(self.items[str(mal_id)]["score"]) == 0.0
         # TODO: disabled for now
         return False
 
@@ -163,7 +174,6 @@ class Cache:
 
 
 class list_item:
-
     def __init__(self, tr, cache):
 
         status_td, title_td, user_score_td, diff_score_td = tr.find_all("td")
@@ -175,7 +185,9 @@ class list_item:
         self.mal_url = title_td.find("a")["href"]
 
         # mal id
-        self.mal_id = match(f"https:\/\/myanimelist\.net\/{scrape_type()}\/(\d+)", self.mal_url).groups(1)[0]
+        self.mal_id = match(
+            f"https:\/\/myanimelist\.net\/{scrape_type()}\/(\d+)", self.mal_url
+        ).groups(1)[0]
 
         # status
         self.status = get_status(status_td)
@@ -195,8 +207,13 @@ class list_item:
             self.diff = float(0)
 
         # mal score
-        if self.diff == self.user_rating:  # need to check if diff is correct, and its not that there aren't enough scores on MAL
-            print(f"MAL has under 50 ratings, score for {self.mal_id} not listed on graph.anime.plus.", end=" ")
+        if (
+            self.diff == self.user_rating
+        ):  # need to check if diff is correct, and its not that there aren't enough scores on MAL
+            print(
+                f"MAL has under 50 ratings, score for {self.mal_id} not listed on graph.anime.plus.",
+                end=" ",
+            )
             try:
                 score = cache.get(self.mal_id)
                 print(f"Found score in cache: {score}")
@@ -227,29 +244,77 @@ def options():
     global JSON_FILENAME
     global _type
 
-    status_map = {"W": "Currently Watching", "C": "Completed", "O": "On-Hold", "D": "Dropped", "P": "Plan to Watch"}
+    status_map = {
+        "W": "Currently Watching",
+        "C": "Completed",
+        "O": "On-Hold",
+        "D": "Dropped",
+        "P": "Plan to Watch",
+    }
 
-    parser = argparse.ArgumentParser(description="Create user vs average MAL Score correlation graphs.", prog="python3 {}".format(sys.argv[0]), formatter_class=lambda prog: fixFormatter(prog, max_help_position=40))
+    parser = argparse.ArgumentParser(
+        description="Create user vs average MAL Score correlation graphs.",
+        prog="python3 {}".format(sys.argv[0]),
+        formatter_class=lambda prog: fixFormatter(prog, max_help_position=40),
+    )
     optionals = parser._action_groups.pop()
-    required = parser.add_argument_group('required arguemnts')
-    required.add_argument("-u", "--username", help="The MAL User for who the list/graph should be generated.", required=True)
+    required = parser.add_argument_group("required arguemnts")
+    required.add_argument(
+        "-u",
+        "--username",
+        help="The MAL User for who the list/graph should be generated.",
+        required=True,
+    )
     scrape_type = required.add_mutually_exclusive_group(required=True)
-    scrape_type.add_argument("-a", "--anime", help="Create a graph/csv file for this users anime.", action="store_true")
-    scrape_type.add_argument("-m", "--manga", help="Create a graph/csv file for this users manga.", action="store_true")
-    optionals.add_argument("--cache-decay-time", type=int, help="Number of days scores should stay in cache before they are refresed. If not provided, uses 2 weeks.")
-    optionals.add_argument("-w", "--wait-time", type=int, help="Wait time between (manual; non-API) scrape requests. Default and recommended is 5 (seconds).")
-    optionals.add_argument("-f", "--filter", help="M|Filter by Status,\ne.g. '-f WC' would filter so output\ncontained only Watching and Completed.\n" +
-                           "W: Currently Watching\n" +
-                           "C: Completed\n" +
-                           "O: On-Hold\n" +
-                           "D: Dropped\n" +
-                           "P: Plan to Watch\n"
-                           )
+    scrape_type.add_argument(
+        "-a",
+        "--anime",
+        help="Create a graph/csv file for this users anime.",
+        action="store_true",
+    )
+    scrape_type.add_argument(
+        "-m",
+        "--manga",
+        help="Create a graph/csv file for this users manga.",
+        action="store_true",
+    )
+    optionals.add_argument(
+        "--cache-decay-time",
+        type=int,
+        help="Number of days scores should stay in cache before they are refresed. If not provided, uses 2 weeks.",
+    )
+    optionals.add_argument(
+        "-w",
+        "--wait-time",
+        type=int,
+        help="Wait time between (manual; non-API) scrape requests. Default and recommended is 5 (seconds).",
+    )
+    optionals.add_argument(
+        "-f",
+        "--filter",
+        help="M|Filter by Status,\ne.g. '-f WC' would filter so output\ncontained only Watching and Completed.\n"
+        + "W: Currently Watching\n"
+        + "C: Completed\n"
+        + "O: On-Hold\n"
+        + "D: Dropped\n"
+        + "P: Plan to Watch\n",
+    )
     parser._action_groups.append(optionals)
-    choose_outputs = parser.add_argument_group("(optional) output options (Generates both if nothing specified)")
-    choose_outputs.add_argument("-c", "--csv", help="Output a CSV File.", action="store_true")
-    choose_outputs.add_argument("-g", "--graph", help="Output a graph.", action="store_true")
-    choose_outputs.add_argument("-d", "--display-name", help="Display the username on the graph.", action="store_true")
+    choose_outputs = parser.add_argument_group(
+        "(optional) output options (Generates both if nothing specified)"
+    )
+    choose_outputs.add_argument(
+        "-c", "--csv", help="Output a CSV File.", action="store_true"
+    )
+    choose_outputs.add_argument(
+        "-g", "--graph", help="Output a graph.", action="store_true"
+    )
+    choose_outputs.add_argument(
+        "-d",
+        "--display-name",
+        help="Display the username on the graph.",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.wait_time is None:
@@ -278,7 +343,15 @@ def options():
         args.csv, args.graph = True, True
 
     # username, wait time, reset cache, csv, graph
-    return args.username, args.wait_time, args.cache_decay_time, args.display_name, status_list, args.csv, args.graph
+    return (
+        args.username,
+        args.wait_time,
+        args.cache_decay_time,
+        args.display_name,
+        status_list,
+        args.csv,
+        args.graph,
+    )
 
 
 def make_graph(x, y, output_name, username, display_name):
@@ -296,19 +369,21 @@ def make_graph(x, y, output_name, username, display_name):
     # make plot rectangle
     plt.figure(figsize=(12, 6))
     # scatter plot
-    plt.scatter(x, y, color='blue', marker='|')
+    plt.scatter(x, y, color="blue", marker="|")
     # regression line
-    plt.plot(x, regression_y, color='black', linestyle='solid')
+    plt.plot(x, regression_y, color="black", linestyle="solid")
 
     # Title if wanted
     if not display_name:
-        plt.title(f'[{scrape_type().capitalize()}] User to Consensus Score Correlation')
+        plt.title(f"[{scrape_type().capitalize()}] User to Consensus Score Correlation")
     else:
-        plt.title(f'{username} - [{scrape_type().capitalize()}] User to Consensus Score Correlation')
+        plt.title(
+            f"{username} - [{scrape_type().capitalize()}] User to Consensus Score Correlation"
+        )
 
     # label axes
-    plt.xlabel('Average MAL Score')
-    plt.ylabel('User Score')
+    plt.xlabel("Average MAL Score")
+    plt.ylabel("User Score")
 
     # no grid
     plt.grid(False)
@@ -318,7 +393,7 @@ def make_graph(x, y, output_name, username, display_name):
     plt.yticks(np.arange(1, 11, 1))
 
     # annotate r^2 value onto the graph
-    plt.annotate('r²: {}'.format(r_squared), xy=(0.05, 0.95), xycoords='axes fraction')
+    plt.annotate("r²: {}".format(r_squared), xy=(0.05, 0.95), xycoords="axes fraction")
 
     # plt.show()
     plt.savefig(f"{output_name}.png")
@@ -329,16 +404,27 @@ def get_graph_anime_trs(username, scraper):
     url = "https://graph.anime.plus/{}/list,{}".format(username, scrape_type())
     graph_anime_page = scraper.get_soup(url)
     graph_anime_page_title = graph_anime_page.find("h2")
-    if graph_anime_page_title and graph_anime_page_title.text.strip().lower() == "user not found":
-        raise UnknownUser("""Couldn't find your user on graph.anime.plus. Add it there before running this.
-https://graph.anime.plus/""")
-    all_trs = graph_anime_page.find("table", {"class": "tablesorter"}).find("tbody").find_all("tr")
+    if (
+        graph_anime_page_title
+        and graph_anime_page_title.text.strip().lower() == "user not found"
+    ):
+        raise UnknownUser(
+            """Couldn't find your user on graph.anime.plus. Add it there before running this.
+https://graph.anime.plus/"""
+        )
+    all_trs = (
+        graph_anime_page.find("table", {"class": "tablesorter"})
+        .find("tbody")
+        .find_all("tr")
+    )
     # Remove non-scored entries; those which have `-`'s
     valid_trs = list(filter(lambda tr: tr.find_all("td")[-1].text != "-", all_trs))
     return valid_trs
 
 
-def main(username, wait_time, cache_decay_time, display_name, status_list, output_settings):
+def main(
+    username, wait_time, cache_decay_time, display_name, status_list, output_settings
+):
 
     output_to_csv, output_graph = output_settings
 
@@ -349,11 +435,19 @@ def main(username, wait_time, cache_decay_time, display_name, status_list, outpu
     # Remove non-scored entries
     valid_trs = get_graph_anime_trs(username, scraper)
     # Filter by status
-    filtered_trs = list(filter(lambda tr: get_status(tr.find_all("td")[0]) is not None and get_status(tr.find_all("td")[0]) in status_list, valid_trs))
+    filtered_trs = list(
+        filter(
+            lambda tr: get_status(tr.find_all("td")[0]) is not None
+            and get_status(tr.find_all("td")[0]) in status_list,
+            valid_trs,
+        )
+    )
     # Create objects, pull score data from Jikan/MAL if necessary
     user_data = [list_item(tr, cache) for tr in filtered_trs]
     # remove items with no score, not useful to graph
-    user_data = list(filter(lambda l_item: float(l_item.mal_average_rating) != float(0.0), user_data))
+    user_data = list(
+        filter(lambda l_item: float(l_item.mal_average_rating) != float(0.0), user_data)
+    )
 
     if not user_data:
         print("User has no rating data.")
@@ -364,10 +458,17 @@ def main(username, wait_time, cache_decay_time, display_name, status_list, outpu
     output_name = f"{username}-{round(current_unix_time())}"
 
     if output_to_csv:
-        with open(f"{output_name}.csv", 'w') as csv_w:
+        with open(f"{output_name}.csv", "w") as csv_w:
             csv_writer = writer(csv_w)
             for line in user_data:
-                csv_writer.writerow([line.mal_id, line.status, line.user_rating, line.mal_average_rating])
+                csv_writer.writerow(
+                    [
+                        line.mal_id,
+                        line.status,
+                        line.user_rating,
+                        line.mal_average_rating,
+                    ]
+                )
 
     if output_graph:
         x_vals = []
@@ -381,6 +482,20 @@ def main(username, wait_time, cache_decay_time, display_name, status_list, outpu
 
 
 if __name__ == "__main__":
-    username, wait_time, cache_decay_time, display_name, status_list, *output_settings = options()
-    main(username, wait_time, cache_decay_time, display_name, status_list, output_settings)
+    (
+        username,
+        wait_time,
+        cache_decay_time,
+        display_name,
+        status_list,
+        *output_settings,
+    ) = options()
+    main(
+        username,
+        wait_time,
+        cache_decay_time,
+        display_name,
+        status_list,
+        output_settings,
+    )
     print("Done!")

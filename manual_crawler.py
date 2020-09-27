@@ -2,12 +2,14 @@ import requests
 import time
 from bs4 import BeautifulSoup
 
+
 class crawl:
     """Keep track of time between scrape requests.
-        args:
-            wait: time between requests
-            retry_max: number of times to retry
+    args:
+        wait: time between requests
+        retry_max: number of times to retry
     """
+
     def __init__(self, wait, retry_max):
         self.wait = wait
         self.retry_max = retry_max
@@ -18,12 +20,12 @@ class crawl:
         return (time.time() - self.last_scrape) > self.wait
 
     def wait_till(self):
-        while (not self.since_scrape()):
+        while not self.since_scrape():
             time.sleep(1)
 
     def get(self, url):
         count = 0
-        while (count < self.retry_max):
+        while count < self.retry_max:
             time.sleep(self.wait * count)  # sleep for successively longer times
             try:
                 self.wait_till()
@@ -32,8 +34,10 @@ class crawl:
                 if response.status_code == requests.codes.ok:
                     return response
                 else:
-                    raise Exception("Non-standard issue connecting to " +
-                                    f"{url}: {response.status_code}.")
+                    raise Exception(
+                        "Non-standard issue connecting to "
+                        + f"{url}: {response.status_code}."
+                    )
             except requests.exceptions.RequestException as e:
                 pass
             count += 1
@@ -42,7 +46,7 @@ class crawl:
         return self.get(url).text
 
     def get_soup(self, url):
-        return BeautifulSoup(self.get(url).text, 'html.parser')
+        return BeautifulSoup(self.get(url).text, "html.parser")
 
     def get_json(self, url):
         return self.get(url).json()

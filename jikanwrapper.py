@@ -3,8 +3,10 @@ import requests
 
 # Uses the wonderful https://jikan.moe/ to cache info about MAL Scores
 
+
 class JikanException(Exception):
     """General exception for Jikan requests"""
+
     pass
 
 
@@ -14,15 +16,15 @@ class Jikan:
     MANGA = False
 
     def __init__(self):
-        self.base_url = 'https://api.jikan.moe/v3'
+        self.base_url = "https://api.jikan.moe/v3"
         self.session = requests.Session()
 
     def get(self, id, option):
-        url = "{}/{}/{}".format(self.base_url, 'anime' if option else 'manga', id)
+        url = "{}/{}/{}".format(self.base_url, "anime" if option else "manga", id)
         response = self.session.get(url)
         if response.status_code > 400:
             raise JikanException(f"id {id} failed with {response.status_code}")
-        time.sleep(10) # comply with rate limit
+        time.sleep(10)  # comply with rate limit
         return response.json()
 
     # 0 is no score
@@ -34,6 +36,7 @@ class Jikan:
             return float(score)
         except ValueError:
             return 0
+
 
 if __name__ == "__main__":
     # Basic Tests
